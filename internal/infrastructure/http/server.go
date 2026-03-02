@@ -6,9 +6,11 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/compress"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/gofiber/fiber/v2/middleware/requestid"
+	"github.com/rs/zerolog/log"
 	"github.com/nexlified/dam/internal/application/ports/inbound"
 	"github.com/nexlified/dam/internal/application/ports/outbound"
 	"github.com/nexlified/dam/internal/application/services"
@@ -45,6 +47,7 @@ func NewServer(
 	rl outbound.RateLimiterPort,
 	storage outbound.StoragePort,
 	isDev bool,
+	allowOrigins string,
 ) *Server {
 	app := fiber.New(fiber.Config{
 		ReadTimeout:           30 * time.Second,
@@ -55,19 +58,29 @@ func NewServer(
 	})
 
 	s := &Server{app: app, services: svcs, cache: cache, rl: rl, storage: storage}
-	s.registerMiddleware(isDev)
+	s.registerMiddleware(isDev, allowOrigins)
 	s.registerRoutes()
 	return s
 }
 
-func (s *Server) registerMiddleware(isDev bool) {
+func (s *Server) registerMiddleware(isDev bool, allowOrigins string) {
 	s.app.Use(recover.New())
+
+	if allowOrigins != "" {
+		s.app.Use(cors.New(cors.Config{
+			AllowOrigins:     allowOrigins,
+			AllowMethods:     "GET,POST,PUT,DELETE,PATCH,OPTIONS",
+			AllowHeaders:     "Origin,Content-Type,Authorization",
+			AllowCredentials: true,
+		}))
+	}
+
 	s.app.Use(requestid.New())
 	s.app.Use(securityHeaders())
 
 	if isDev {
 		s.app.Use(logger.New(logger.Config{
-			Format: "${time} | ${status} | ${latency} | ${method} ${path}\n",
+			Format: "${time} | ${status} | ${latency} | ${method} ${path} | id=${locals:requestid}\n",
 		}))
 	}
 
@@ -202,6 +215,9 @@ func errorHandler(c *fiber.Ctx, err error) error {
 	if fe, ok := err.(*fiber.Error); ok {
 		code = fe.Code
 		msg = fe.Message
+		if code >= 500 {
+			log.Error().Err(err).Str("method", c.Method()).Str("path", c.Path()).Str("request_id", c.GetRespHeader("X-Request-Id")).Msg("internal error")
+		}
 		return c.Status(code).JSON(fiber.Map{"error": msg})
 	}
 
@@ -226,6 +242,10 @@ func errorHandler(c *fiber.Ctx, err error) error {
 			code = fiber.StatusConflict
 			msg = err.Error()
 		}
+	}
+
+	if code >= 500 {
+		log.Error().Err(err).Str("method", c.Method()).Str("path", c.Path()).Str("request_id", c.GetRespHeader("X-Request-Id")).Msg("internal error")
 	}
 
 	return c.Status(code).JSON(fiber.Map{"error": msg})

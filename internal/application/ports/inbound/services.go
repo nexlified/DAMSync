@@ -121,8 +121,8 @@ type FolderService interface {
 }
 
 type FolderNode struct {
-	Folder   *domain.Folder
-	Children []*FolderNode
+	*domain.Folder
+	Children []*FolderNode `json:"children"`
 }
 
 // TagService manages tags.

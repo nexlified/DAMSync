@@ -23,21 +23,23 @@ func NewAssetRepository(db *sqlx.DB) *AssetRepository {
 }
 
 type assetRow struct {
-	ID         uuid.UUID  `db:"id"`
-	OrgID      uuid.UUID  `db:"org_id"`
-	FolderID   *uuid.UUID `db:"folder_id"`
-	Filename   string     `db:"filename"`
-	StorageKey string     `db:"storage_key"`
-	MIMEType   string     `db:"mime_type"`
-	SizeBytes  int64      `db:"size_bytes"`
-	Width      *int       `db:"width"`
-	Height     *int       `db:"height"`
-	DurationMS *int64     `db:"duration_ms"`
-	Metadata   []byte     `db:"metadata"`
-	Visibility string     `db:"visibility"`
-	CreatedAt  time.Time  `db:"created_at"`
-	UpdatedAt  time.Time  `db:"updated_at"`
-	DeletedAt  *time.Time `db:"deleted_at"`
+	ID           uuid.UUID  `db:"id"`
+	OrgID        uuid.UUID  `db:"org_id"`
+	FolderID     *uuid.UUID `db:"folder_id"`
+	Filename     string     `db:"filename"`
+	StorageKey   string     `db:"storage_key"`
+	MIMEType     string     `db:"mime_type"`
+	SizeBytes    int64      `db:"size_bytes"`
+	Width        *int       `db:"width"`
+	Height       *int       `db:"height"`
+	DurationMS   *int64     `db:"duration_ms"`
+	Metadata     []byte     `db:"metadata"`
+	Visibility   string     `db:"visibility"`
+	FocalPoint   []byte     `db:"focal_point"`
+	SearchVector []byte     `db:"search_vector"`
+	CreatedAt    time.Time  `db:"created_at"`
+	UpdatedAt    time.Time  `db:"updated_at"`
+	DeletedAt    *time.Time `db:"deleted_at"`
 }
 
 func (r *AssetRepository) Create(ctx context.Context, asset *domain.Asset) error {
@@ -250,8 +252,11 @@ func buildAssetQuery(filter domain.AssetListFilter, count bool) (string, []inter
 		return fmt.Sprintf("SELECT COUNT(*) FROM assets %s", where), args
 	}
 
+	allowedSortCols := map[string]bool{
+		"created_at": true, "updated_at": true, "filename": true, "size_bytes": true,
+	}
 	sortBy := "created_at"
-	if filter.SortBy != "" {
+	if filter.SortBy != "" && allowedSortCols[filter.SortBy] {
 		sortBy = filter.SortBy
 	}
 	sortDir := "DESC"

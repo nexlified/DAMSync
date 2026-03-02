@@ -56,13 +56,13 @@ func (a *Asset) IsDeleted() bool {
 }
 
 type Folder struct {
-	ID        uuid.UUID  `db:"id"`
-	OrgID     uuid.UUID  `db:"org_id"`
-	ParentID  *uuid.UUID `db:"parent_id"`
-	Name      string     `db:"name"`
-	Path      string     `db:"path"` // materialized path e.g. "/photos/2024"
-	CreatedAt time.Time  `db:"created_at"`
-	UpdatedAt time.Time  `db:"updated_at"`
+	ID        uuid.UUID  `db:"id"         json:"id"`
+	OrgID     uuid.UUID  `db:"org_id"     json:"org_id"`
+	ParentID  *uuid.UUID `db:"parent_id"  json:"parent_id"`
+	Name      string     `db:"name"       json:"name"`
+	Path      string     `db:"path"       json:"path"` // materialized path e.g. "/photos/2024"
+	CreatedAt time.Time  `db:"created_at" json:"created_at"`
+	UpdatedAt time.Time  `db:"updated_at" json:"updated_at"`
 }
 
 type Tag struct {

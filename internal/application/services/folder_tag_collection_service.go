@@ -96,7 +96,7 @@ func (s *FolderServiceImpl) GetFolderTree(ctx context.Context, orgID uuid.UUID) 
 }
 
 func buildFolderTree(all []*domain.Folder, parentID *uuid.UUID) []*inbound.FolderNode {
-	var nodes []*inbound.FolderNode
+	nodes := make([]*inbound.FolderNode, 0)
 	for _, f := range all {
 		if (parentID == nil && f.ParentID == nil) ||
 			(parentID != nil && f.ParentID != nil && *f.ParentID == *parentID) {
