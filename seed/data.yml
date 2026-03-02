@@ -1,0 +1,59 @@
+# DAM initial seed data
+# Run:  scripts/seed-dam.sh
+#
+# Existing records are skipped (safe to re-run).
+
+dam_url: "http://localhost:8080"
+
+organizations:
+  - name: "Nexlified"
+    slug: "nexlified"
+    plan: "free"
+    owner:
+      email: "admin@nexlified.com"
+      password: "ChangeMe123"    # CHANGE before production
+    styles:
+      - name: "Thumbnail"
+        slug: "thumbnail"
+        output_format: "webp"
+        quality: 85
+        operations:
+          - fit: "fill"
+            width: 200
+            height: 200
+
+      - name: "Hero"
+        slug: "hero"
+        output_format: "webp"
+        quality: 90
+        operations:
+          - fit: "fill"
+            width: 1200
+            height: 630
+
+      - name: "OG Image"
+        slug: "og-image"
+        output_format: "jpeg"
+        quality: 85
+        operations:
+          - fit: "fill"
+            width: 1200
+            height: 630
+
+      - name: "Square"
+        slug: "square"
+        output_format: "webp"
+        quality: 85
+        operations:
+          - fit: "fill"
+            width: 400
+            height: 400
+
+      - name: "Avatar"
+        slug: "avatar"
+        output_format: "webp"
+        quality: 80
+        operations:
+          - fit: "fill"
+            width: 96
+            height: 96

@@ -1,0 +1,17 @@
+# MinIO initial setup configuration
+# Run:  scripts/seed-minio.sh
+
+minio:
+  alias: "damlocal"
+  url: "http://localhost:9000"
+  access_key: "minioadmin"
+  secret_key: "minioadmin123"
+
+buckets:
+  - name: "dam-assets"
+    policy: "download"    # anonymous public read (GET only)
+    versioning: false
+
+  - name: "dam-private"
+    policy: "none"        # fully private, served via signed URLs
+    versioning: false

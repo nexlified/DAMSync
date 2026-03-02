@@ -1,0 +1,22 @@
+# Binary
+bin/
+
+# Environment
+.env
+
+# macOS
+.DS_Store
+
+# IDE
+.idea/
+.vscode/
+
+# Test cache
+*.test
+*.out
+
+# Go build cache (not needed — go handles this automatically)
+vendor/
+
+# nohup output
+nohup.out
