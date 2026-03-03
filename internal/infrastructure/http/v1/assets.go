@@ -12,12 +12,30 @@ import (
 )
 
 type AssetsHandler struct {
-	assetSvc inbound.AssetService
-	storage  outbound.StoragePort
+	assetSvc   inbound.AssetService
+	storage    outbound.StoragePort
+	cdnBaseURL string
 }
 
-func NewAssetsHandler(assetSvc inbound.AssetService, storage outbound.StoragePort) *AssetsHandler {
-	return &AssetsHandler{assetSvc: assetSvc, storage: storage}
+func NewAssetsHandler(assetSvc inbound.AssetService, storage outbound.StoragePort, cdnBaseURL string) *AssetsHandler {
+	return &AssetsHandler{assetSvc: assetSvc, storage: storage, cdnBaseURL: cdnBaseURL}
+}
+
+// assetResponse wraps domain.Asset and adds a synthesised CDN URL field.
+type assetResponse struct {
+	*domain.Asset
+	URL string `json:"url"`
+}
+
+func (h *AssetsHandler) enrichAsset(c *fiber.Ctx, asset *domain.Asset) *assetResponse {
+	base := h.cdnBaseURL
+	if base == "" {
+		base = c.BaseURL()
+	}
+	return &assetResponse{
+		Asset: asset,
+		URL:   base + "/files/" + asset.StorageKey,
+	}
 }
 
 func (h *AssetsHandler) Upload(c *fiber.Ctx) error {
@@ -73,7 +91,7 @@ func (h *AssetsHandler) Upload(c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(enrichAsset(asset, h.storage))
+	return c.Status(fiber.StatusCreated).JSON(h.enrichAsset(c, asset))
 }
 
 func (h *AssetsHandler) BulkUpload(c *fiber.Ctx) error {
@@ -112,9 +130,9 @@ func (h *AssetsHandler) BulkUpload(c *fiber.Ctx) error {
 		return err
 	}
 
-	enriched := make([]fiber.Map, len(assets))
+	enriched := make([]*assetResponse, len(assets))
 	for i, a := range assets {
-		enriched[i] = enrichAsset(a, h.storage)
+		enriched[i] = h.enrichAsset(c, a)
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
@@ -153,14 +171,18 @@ func (h *AssetsHandler) List(c *fiber.Ctx) error {
 		return err
 	}
 
-	enriched := make([]fiber.Map, len(assets))
+	enriched := make([]*assetResponse, len(assets))
 	for i, a := range assets {
-		enriched[i] = enrichAsset(a, h.storage)
+		enriched[i] = h.enrichAsset(c, a)
 	}
 
+	var nextCursor *string
+	if cursor != "" {
+		nextCursor = &cursor
+	}
 	return c.JSON(fiber.Map{
 		"data":        enriched,
-		"next_cursor": cursor,
+		"next_cursor": nextCursor,
 	})
 }
 
@@ -176,7 +198,7 @@ func (h *AssetsHandler) Get(c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.JSON(enrichAsset(asset, h.storage))
+	return c.JSON(h.enrichAsset(c, asset))
 }
 
 func (h *AssetsHandler) UpdateMetadata(c *fiber.Ctx) error {
@@ -199,7 +221,7 @@ func (h *AssetsHandler) UpdateMetadata(c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.JSON(enrichAsset(asset, h.storage))
+	return c.JSON(h.enrichAsset(c, asset))
 }
 
 func (h *AssetsHandler) Delete(c *fiber.Ctx) error {
@@ -259,21 +281,3 @@ func (h *AssetsHandler) GetSignedURL(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{"url": url, "expires_in": ttl.Seconds()})
 }
 
-// enrichAsset adds a URL field to the asset response.
-func enrichAsset(asset *domain.Asset, storage outbound.StoragePort) fiber.Map {
-	return fiber.Map{
-		"id":          asset.ID,
-		"org_id":      asset.OrgID,
-		"folder_id":   asset.FolderID,
-		"filename":    asset.Filename,
-		"mime_type":   asset.MIMEType,
-		"size_bytes":  asset.SizeBytes,
-		"width":       asset.Width,
-		"height":      asset.Height,
-		"metadata":    asset.Metadata,
-		"visibility":  asset.Visibility,
-		"url":         "/files/" + asset.StorageKey,
-		"created_at":  asset.CreatedAt,
-		"updated_at":  asset.UpdatedAt,
-	}
-}

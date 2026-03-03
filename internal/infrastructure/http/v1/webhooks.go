@@ -29,10 +29,8 @@ func (h *WebhooksHandler) Create(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
-		"webhook": wh,
-		"secret":  secret, // shown only once
-	})
+	wh.Secret = secret // shown only once
+	return c.Status(fiber.StatusCreated).JSON(wh)
 }
 
 func (h *WebhooksHandler) List(c *fiber.Ctx) error {

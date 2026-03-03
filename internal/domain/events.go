@@ -60,27 +60,27 @@ func NewEvent(eventType EventType, orgID uuid.UUID, payload interface{}) *Event 
 
 // Webhook stores webhook configuration.
 type Webhook struct {
-	ID         uuid.UUID  `db:"id"`
-	OrgID      uuid.UUID  `db:"org_id"`
-	URL        string     `db:"url"`
-	Events     []string   `db:"events"`
-	SecretHash string     `db:"secret_hash"`
-	Secret     string     `db:"-"` // only set on create, never returned
-	Active     bool       `db:"active"`
-	CreatedAt  time.Time  `db:"created_at"`
-	UpdatedAt  time.Time  `db:"updated_at"`
+	ID         uuid.UUID `db:"id"          json:"id"`
+	OrgID      uuid.UUID `db:"org_id"      json:"org_id"`
+	URL        string    `db:"url"         json:"url"`
+	Events     []string  `db:"events"      json:"events"`
+	SecretHash string    `db:"secret_hash" json:"-"`
+	Secret     string    `db:"-"           json:"secret,omitempty"` // only set on create
+	Active     bool      `db:"active"      json:"active"`
+	CreatedAt  time.Time `db:"created_at"  json:"created_at"`
+	UpdatedAt  time.Time `db:"updated_at"  json:"updated_at"`
 }
 
 type WebhookDelivery struct {
-	ID          uuid.UUID  `db:"id"`
-	WebhookID   uuid.UUID  `db:"webhook_id"`
-	Event       string     `db:"event"`
-	Payload     string     `db:"payload"`
-	Status      string     `db:"status"` // "pending", "delivered", "failed"
-	Attempts    int        `db:"attempts"`
-	NextRetryAt *time.Time `db:"next_retry_at"`
-	CreatedAt   time.Time  `db:"created_at"`
-	UpdatedAt   time.Time  `db:"updated_at"`
+	ID          uuid.UUID  `db:"id"            json:"id"`
+	WebhookID   uuid.UUID  `db:"webhook_id"    json:"webhook_id"`
+	Event       string     `db:"event"         json:"event"`
+	Payload     string     `db:"payload"       json:"payload"`
+	Status      string     `db:"status"        json:"status"` // "pending", "delivered", "failed"
+	Attempts    int        `db:"attempts"      json:"attempts"`
+	NextRetryAt *time.Time `db:"next_retry_at" json:"next_retry_at"`
+	CreatedAt   time.Time  `db:"created_at"    json:"created_at"`
+	UpdatedAt   time.Time  `db:"updated_at"    json:"updated_at"`
 }
 
 type AuditLog struct {

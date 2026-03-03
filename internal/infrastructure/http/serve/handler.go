@@ -38,7 +38,8 @@ func (h *Handler) ServePublic(c *fiber.Ctx) error {
 	if err != nil {
 		return fiber.ErrNotFound
 	}
-	defer rc.Close()
+	// Do NOT defer rc.Close() here — fasthttp reads the stream after the handler
+	// returns and closes it itself. Closing early results in an empty response body.
 
 	_ = orgID // orgID could be used for access control if needed
 
@@ -54,7 +55,11 @@ func (h *Handler) ServePublic(c *fiber.Ctx) error {
 		c.Set("Content-Length", strconv.FormatInt(size, 10))
 	}
 
-	return c.SendStream(rc, int(size))
+	streamSize := int(size)
+	if streamSize <= 0 {
+		streamSize = -1 // unknown size — stream until EOF
+	}
+	return c.SendStream(rc, streamSize)
 }
 
 // ServeStyled handles GET /styles/:style/* — applies named image style.
@@ -120,7 +125,7 @@ func (h *Handler) ServeSigned(c *fiber.Ctx) error {
 	if err != nil {
 		return fiber.ErrNotFound
 	}
-	defer rc.Close()
+	// Do NOT defer rc.Close() — fasthttp closes the stream after reading.
 
 	c.Set("Cache-Control", "private, no-store")
 	c.Set("Content-Type", contentTypeFromPath(assetPath))
@@ -128,7 +133,11 @@ func (h *Handler) ServeSigned(c *fiber.Ctx) error {
 		c.Set("Content-Length", strconv.FormatInt(size, 10))
 	}
 
-	return c.SendStream(rc, int(size))
+	streamSize := int(size)
+	if streamSize <= 0 {
+		streamSize = -1 // unknown size — stream until EOF
+	}
+	return c.SendStream(rc, streamSize)
 }
 
 // ServeAdHoc handles ad-hoc transform params for trusted callers.

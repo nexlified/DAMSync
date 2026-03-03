@@ -7,15 +7,15 @@ import (
 )
 
 type Org struct {
-	ID               uuid.UUID  `db:"id"`
-	Name             string     `db:"name"`
-	Slug             string     `db:"slug"`
-	Plan             string     `db:"plan"`
-	StorageQuotaBytes int64     `db:"storage_quota_bytes"`
-	StorageUsedBytes  int64     `db:"storage_used_bytes"`
-	Settings         OrgSettings `db:"settings"`
-	CreatedAt        time.Time  `db:"created_at"`
-	UpdatedAt        time.Time  `db:"updated_at"`
+	ID                uuid.UUID   `db:"id"                  json:"id"`
+	Name              string      `db:"name"                json:"name"`
+	Slug              string      `db:"slug"                json:"slug"`
+	Plan              string      `db:"plan"                json:"plan"`
+	StorageQuotaBytes int64       `db:"storage_quota_bytes" json:"storage_quota_bytes"`
+	StorageUsedBytes  int64       `db:"storage_used_bytes"  json:"storage_used_bytes"`
+	Settings          OrgSettings `db:"settings"            json:"settings"`
+	CreatedAt         time.Time   `db:"created_at"          json:"created_at"`
+	UpdatedAt         time.Time   `db:"updated_at"          json:"updated_at"`
 }
 
 type OrgSettings struct {
@@ -38,28 +38,28 @@ const (
 )
 
 type User struct {
-	ID           uuid.UUID  `db:"id"`
-	OrgID        uuid.UUID  `db:"org_id"`
-	Email        string     `db:"email"`
-	PasswordHash string     `db:"password_hash"`
-	Role         Role       `db:"role"`
-	Active       bool       `db:"active"`
-	CreatedAt    time.Time  `db:"created_at"`
-	UpdatedAt    time.Time  `db:"updated_at"`
+	ID           uuid.UUID `db:"id"            json:"id"`
+	OrgID        uuid.UUID `db:"org_id"        json:"org_id"`
+	Email        string    `db:"email"         json:"email"`
+	PasswordHash string    `db:"password_hash" json:"-"`
+	Role         Role      `db:"role"          json:"role"`
+	Active       bool      `db:"active"        json:"active"`
+	CreatedAt    time.Time `db:"created_at"    json:"created_at"`
+	UpdatedAt    time.Time `db:"updated_at"    json:"updated_at"`
 }
 
 type APIKey struct {
-	ID          uuid.UUID  `db:"id"`
-	OrgID       uuid.UUID  `db:"org_id"`
-	UserID      *uuid.UUID `db:"user_id"`
-	Name        string     `db:"name"`
-	KeyPrefix   string     `db:"key_prefix"`
-	KeyHash     string     `db:"key_hash"`
-	Scopes      []string   `db:"scopes"`
-	LastUsedAt  *time.Time `db:"last_used_at"`
-	IPAllowlist []string   `db:"ip_allowlist"`
-	CreatedAt   time.Time  `db:"created_at"`
-	RevokedAt   *time.Time `db:"revoked_at"`
+	ID          uuid.UUID  `db:"id"           json:"id"`
+	OrgID       uuid.UUID  `db:"org_id"       json:"org_id"`
+	UserID      *uuid.UUID `db:"user_id"      json:"user_id"`
+	Name        string     `db:"name"         json:"name"`
+	KeyPrefix   string     `db:"key_prefix"   json:"key_prefix"`
+	KeyHash     string     `db:"key_hash"     json:"-"`
+	Scopes      []string   `db:"scopes"       json:"scopes"`
+	LastUsedAt  *time.Time `db:"last_used_at" json:"last_used_at"`
+	IPAllowlist []string   `db:"ip_allowlist" json:"ip_allowlist"`
+	CreatedAt   time.Time  `db:"created_at"   json:"created_at"`
+	RevokedAt   *time.Time `db:"revoked_at"   json:"revoked_at"`
 }
 
 // APIKey scope constants

@@ -78,9 +78,9 @@ type UpdateUserRequest struct {
 }
 
 type StorageUsage struct {
-	UsedBytes  int64
-	QuotaBytes int64
-	Percent    float64
+	UsedBytes  int64   `json:"used_bytes"`
+	QuotaBytes int64   `json:"quota_bytes"`
+	Percent    float64 `json:"percent"`
 }
 
 // AssetService manages assets.

@@ -34,11 +34,12 @@ type Services struct {
 }
 
 type Server struct {
-	app      *fiber.App
-	services *Services
-	cache    outbound.CachePort
-	rl       outbound.RateLimiterPort
-	storage  outbound.StoragePort
+	app        *fiber.App
+	services   *Services
+	cache      outbound.CachePort
+	rl         outbound.RateLimiterPort
+	storage    outbound.StoragePort
+	cdnBaseURL string
 }
 
 func NewServer(
@@ -48,6 +49,7 @@ func NewServer(
 	storage outbound.StoragePort,
 	isDev bool,
 	allowOrigins string,
+	cdnBaseURL string,
 ) *Server {
 	app := fiber.New(fiber.Config{
 		ReadTimeout:           30 * time.Second,
@@ -57,7 +59,7 @@ func NewServer(
 		BodyLimit:             500 * 1024 * 1024, // 500 MiB max body
 	})
 
-	s := &Server{app: app, services: svcs, cache: cache, rl: rl, storage: storage}
+	s := &Server{app: app, services: svcs, cache: cache, rl: rl, storage: storage, cdnBaseURL: cdnBaseURL}
 	s.registerMiddleware(isDev, allowOrigins)
 	s.registerRoutes()
 	return s
@@ -132,7 +134,7 @@ func (s *Server) registerRoutes() {
 	protected.Delete("/api-keys/:id", orgsHandler.RevokeAPIKey)
 
 	// Assets
-	assetsHandler := v1.NewAssetsHandler(s.services.Asset, s.storage)
+	assetsHandler := v1.NewAssetsHandler(s.services.Asset, s.storage, s.cdnBaseURL)
 	api.Post("/assets", middleware.RequireAuth(s.services.Auth), middleware.RequireScope("assets:write"), assetsHandler.Upload)
 	api.Post("/assets/bulk", middleware.RequireAuth(s.services.Auth), middleware.RequireScope("assets:write"), assetsHandler.BulkUpload)
 	protected.Get("/assets", assetsHandler.List)
@@ -173,6 +175,7 @@ func (s *Server) registerRoutes() {
 	// Image Styles
 	stylesHandler := v1.NewStylesHandler(s.services.Style)
 	protected.Post("/styles", middleware.RequireRole("owner", "admin"), stylesHandler.Create)
+	protected.Post("/styles/import-defaults", middleware.RequireRole("owner", "admin"), stylesHandler.ImportDefaults)
 	protected.Get("/styles", stylesHandler.List)
 	protected.Get("/styles/:id", stylesHandler.Get)
 	protected.Put("/styles/:id", middleware.RequireRole("owner", "admin"), stylesHandler.Update)

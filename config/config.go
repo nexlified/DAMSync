@@ -19,6 +19,11 @@ type Config struct {
 	ACME       ACMEConfig
 	Log        LogConfig
 	Migrations MigrationsConfig
+	CORS       CORSConfig
+}
+
+type CORSConfig struct {
+	AllowOrigins string `mapstructure:"allow_origins"`
 }
 
 type ServerConfig struct {
@@ -26,6 +31,7 @@ type ServerConfig struct {
 	Port         int           `mapstructure:"port"`
 	ReadTimeout  time.Duration `mapstructure:"read_timeout"`
 	WriteTimeout time.Duration `mapstructure:"write_timeout"`
+	CDNBaseURL   string        `mapstructure:"cdn_base_url"`
 }
 
 type DatabaseConfig struct {
@@ -84,6 +90,7 @@ func Load() (*Config, error) {
 	v.SetDefault("server.port", 8080)
 	v.SetDefault("server.read_timeout", "30s")
 	v.SetDefault("server.write_timeout", "30s")
+	v.SetDefault("server.cdn_base_url", "")
 	// Database — empty defaults so AutomaticEnv resolves them during Unmarshal
 	v.SetDefault("database.dsn", "")
 	v.SetDefault("database.max_open_conns", 25)
@@ -113,6 +120,8 @@ func Load() (*Config, error) {
 	v.SetDefault("log.format", "json")
 	// Migrations
 	v.SetDefault("migrations.path", "migrations")
+	// CORS
+	v.SetDefault("cors.allow_origins", "")
 
 	// Optional YAML config file (takes lower priority than env vars)
 	v.SetConfigName("config")

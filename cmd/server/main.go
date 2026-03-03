@@ -154,6 +154,8 @@ func main() {
 		rateLimiter,
 		s3Storage,
 		cfg.Env == "development",
+		cfg.CORS.AllowOrigins,
+		cfg.Server.CDNBaseURL,
 	)
 
 	addr := apphttp.Addr(cfg.Server.Host, cfg.Server.Port)

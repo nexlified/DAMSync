@@ -46,26 +46,26 @@ type StyleOperation struct {
 }
 
 type ImageStyle struct {
-	ID           uuid.UUID        `db:"id"`
-	OrgID        uuid.UUID        `db:"org_id"`
-	Name         string           `db:"name"`
-	Slug         string           `db:"slug"`
-	Operations   []StyleOperation `db:"operations"`
-	OutputFormat OutputFormat     `db:"output_format"`
-	Quality      int              `db:"quality"`
-	CreatedAt    time.Time        `db:"created_at"`
-	UpdatedAt    time.Time        `db:"updated_at"`
+	ID           uuid.UUID        `db:"id"            json:"id"`
+	OrgID        uuid.UUID        `db:"org_id"        json:"org_id"`
+	Name         string           `db:"name"          json:"name"`
+	Slug         string           `db:"slug"          json:"slug"`
+	Operations   []StyleOperation `db:"operations"    json:"operations"`
+	OutputFormat OutputFormat     `db:"output_format" json:"output_format"`
+	Quality      int              `db:"quality"       json:"quality"`
+	CreatedAt    time.Time        `db:"created_at"    json:"created_at"`
+	UpdatedAt    time.Time        `db:"updated_at"    json:"updated_at"`
 }
 
 type TransformCache struct {
-	ID         uuid.UUID `db:"id"`
-	AssetID    uuid.UUID `db:"asset_id"`
-	StyleID    *uuid.UUID `db:"style_id"`
-	ParamsHash string    `db:"params_hash"` // for ad-hoc transforms
-	StorageKey string    `db:"storage_key"`
-	SizeBytes  int64     `db:"size_bytes"`
-	Format     string    `db:"format"`
-	CreatedAt  time.Time `db:"created_at"`
+	ID         uuid.UUID  `db:"id"          json:"id"`
+	AssetID    uuid.UUID  `db:"asset_id"    json:"asset_id"`
+	StyleID    *uuid.UUID `db:"style_id"    json:"style_id"`
+	ParamsHash string     `db:"params_hash" json:"params_hash"` // for ad-hoc transforms
+	StorageKey string     `db:"storage_key" json:"storage_key"`
+	SizeBytes  int64      `db:"size_bytes"  json:"size_bytes"`
+	Format     string     `db:"format"      json:"format"`
+	CreatedAt  time.Time  `db:"created_at"  json:"created_at"`
 }
 
 // AdHocParams represents ad-hoc transform parameters (for trusted API callers).

@@ -15,23 +15,23 @@ const (
 )
 
 type Asset struct {
-	ID          uuid.UUID        `db:"id"`
-	OrgID       uuid.UUID        `db:"org_id"`
-	FolderID    *uuid.UUID       `db:"folder_id"`
-	Filename    string           `db:"filename"`
-	StorageKey  string           `db:"storage_key"`
-	MIMEType    string           `db:"mime_type"`
-	SizeBytes   int64            `db:"size_bytes"`
-	Width       *int             `db:"width"`
-	Height      *int             `db:"height"`
-	DurationMS  *int64           `db:"duration_ms"`
-	Metadata    AssetMetadata    `db:"metadata"`
-	Visibility  Visibility       `db:"visibility"`
-	FocalPoint  *FocalPoint      `db:"-"`
-	Tags        []Tag            `db:"-"`
-	CreatedAt   time.Time        `db:"created_at"`
-	UpdatedAt   time.Time        `db:"updated_at"`
-	DeletedAt   *time.Time       `db:"deleted_at"`
+	ID         uuid.UUID     `db:"id"           json:"id"`
+	OrgID      uuid.UUID     `db:"org_id"       json:"org_id"`
+	FolderID   *uuid.UUID    `db:"folder_id"    json:"folder_id"`
+	Filename   string        `db:"filename"     json:"filename"`
+	StorageKey string        `db:"storage_key"  json:"storage_key"`
+	MIMEType   string        `db:"mime_type"    json:"mime_type"`
+	SizeBytes  int64         `db:"size_bytes"   json:"size_bytes"`
+	Width      *int          `db:"width"        json:"width"`
+	Height     *int          `db:"height"       json:"height"`
+	DurationMS *int64        `db:"duration_ms"  json:"duration_ms,omitempty"`
+	Metadata   AssetMetadata `db:"metadata"     json:"metadata"`
+	Visibility Visibility    `db:"visibility"   json:"visibility"`
+	FocalPoint *FocalPoint   `db:"-"            json:"focal_point,omitempty"`
+	Tags       []Tag         `db:"-"            json:"tags"`
+	CreatedAt  time.Time     `db:"created_at"   json:"created_at"`
+	UpdatedAt  time.Time     `db:"updated_at"   json:"updated_at"`
+	DeletedAt  *time.Time    `db:"deleted_at"   json:"-"`
 }
 
 type AssetMetadata struct {
@@ -66,21 +66,21 @@ type Folder struct {
 }
 
 type Tag struct {
-	ID        uuid.UUID `db:"id"`
-	OrgID     uuid.UUID `db:"org_id"`
-	Name      string    `db:"name"`
-	Slug      string    `db:"slug"`
-	CreatedAt time.Time `db:"created_at"`
+	ID        uuid.UUID `db:"id"         json:"id"`
+	OrgID     uuid.UUID `db:"org_id"     json:"org_id"`
+	Name      string    `db:"name"       json:"name"`
+	Slug      string    `db:"slug"       json:"slug"`
+	CreatedAt time.Time `db:"created_at" json:"created_at"`
 }
 
 type Collection struct {
-	ID          uuid.UUID  `db:"id"`
-	OrgID       uuid.UUID  `db:"org_id"`
-	Name        string     `db:"name"`
-	Description string     `db:"description"`
-	AssetCount  int        `db:"-"`
-	CreatedAt   time.Time  `db:"created_at"`
-	UpdatedAt   time.Time  `db:"updated_at"`
+	ID          uuid.UUID `db:"id"          json:"id"`
+	OrgID       uuid.UUID `db:"org_id"      json:"org_id"`
+	Name        string    `db:"name"        json:"name"`
+	Description string    `db:"description" json:"description"`
+	AssetCount  int       `db:"-"           json:"asset_count"`
+	CreatedAt   time.Time `db:"created_at"  json:"created_at"`
+	UpdatedAt   time.Time `db:"updated_at"  json:"updated_at"`
 }
 
 type CollectionAsset struct {
