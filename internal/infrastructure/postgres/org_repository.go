@@ -9,7 +9,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
-	"github.com/nexlified/dam/internal/domain"
+	"github.com/nexlified/dam/domain"
 )
 
 type OrgRepository struct {
@@ -28,6 +28,7 @@ type orgRow struct {
 	StorageQuotaBytes int64     `db:"storage_quota_bytes"`
 	StorageUsedBytes  int64     `db:"storage_used_bytes"`
 	Settings          []byte    `db:"settings"`
+	Active            bool      `db:"active"`
 	CreatedAt         time.Time `db:"created_at"`
 	UpdatedAt         time.Time `db:"updated_at"`
 }
@@ -38,11 +39,11 @@ func (r *OrgRepository) Create(ctx context.Context, org *domain.Org) error {
 		return err
 	}
 	_, err = r.db.ExecContext(ctx, `
-		INSERT INTO organizations (id, name, slug, plan, storage_quota_bytes, storage_used_bytes, settings, created_at, updated_at)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+		INSERT INTO organizations (id, name, slug, plan, storage_quota_bytes, storage_used_bytes, settings, active, created_at, updated_at)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
 		org.ID, org.Name, org.Slug, org.Plan,
 		org.StorageQuotaBytes, org.StorageUsedBytes,
-		settings, org.CreatedAt, org.UpdatedAt,
+		settings, org.Active, org.CreatedAt, org.UpdatedAt,
 	)
 	return err
 }
@@ -77,9 +78,9 @@ func (r *OrgRepository) Update(ctx context.Context, org *domain.Org) error {
 		return err
 	}
 	_, err = r.db.ExecContext(ctx, `
-		UPDATE organizations SET name=$1, plan=$2, storage_quota_bytes=$3, settings=$4, updated_at=$5
-		WHERE id=$6`,
-		org.Name, org.Plan, org.StorageQuotaBytes, settings, org.UpdatedAt, org.ID,
+		UPDATE organizations SET name=$1, plan=$2, storage_quota_bytes=$3, settings=$4, active=$5, updated_at=$6
+		WHERE id=$7`,
+		org.Name, org.Plan, org.StorageQuotaBytes, settings, org.Active, org.UpdatedAt, org.ID,
 	)
 	return err
 }
@@ -129,6 +130,7 @@ func rowToOrg(row orgRow) (*domain.Org, error) {
 		StorageQuotaBytes: row.StorageQuotaBytes,
 		StorageUsedBytes:  row.StorageUsedBytes,
 		Settings:          settings,
+		Active:            row.Active,
 		CreatedAt:         row.CreatedAt,
 		UpdatedAt:         row.UpdatedAt,
 	}, nil

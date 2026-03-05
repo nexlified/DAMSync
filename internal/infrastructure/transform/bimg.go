@@ -6,8 +6,8 @@ import (
 	"strings"
 
 	"github.com/h2non/bimg"
-	"github.com/nexlified/dam/internal/application/ports/outbound"
-	"github.com/nexlified/dam/internal/domain"
+	"github.com/nexlified/dam/ports/outbound"
+	"github.com/nexlified/dam/domain"
 )
 
 type BimgTransformer struct{}

@@ -5,8 +5,8 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
-	"github.com/nexlified/dam/internal/application/ports/inbound"
-	"github.com/nexlified/dam/internal/domain"
+	"github.com/nexlified/dam/ports/inbound"
+	"github.com/nexlified/dam/domain"
 	"github.com/nexlified/dam/seed"
 	"gopkg.in/yaml.v3"
 )

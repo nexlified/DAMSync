@@ -3,7 +3,7 @@ package outbound
 import (
 	"context"
 
-	"github.com/nexlified/dam/internal/domain"
+	"github.com/nexlified/dam/domain"
 )
 
 // TransformRequest specifies what transformation to apply.

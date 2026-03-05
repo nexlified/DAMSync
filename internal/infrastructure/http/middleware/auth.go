@@ -4,9 +4,9 @@ import (
 	"strings"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/nexlified/dam/internal/application/ports/inbound"
+	"github.com/nexlified/dam/ports/inbound"
 	"github.com/nexlified/dam/internal/application/services"
-	"github.com/nexlified/dam/internal/domain"
+	"github.com/nexlified/dam/domain"
 )
 
 const (

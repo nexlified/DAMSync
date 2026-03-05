@@ -9,8 +9,8 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/nexlified/dam/internal/application/ports/outbound"
-	"github.com/nexlified/dam/internal/domain"
+	"github.com/nexlified/dam/ports/outbound"
+	"github.com/nexlified/dam/domain"
 )
 
 type DomainServiceImpl struct {

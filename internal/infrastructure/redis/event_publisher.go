@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 
-	"github.com/nexlified/dam/internal/domain"
+	"github.com/nexlified/dam/domain"
 	goredis "github.com/redis/go-redis/v9"
 )
 

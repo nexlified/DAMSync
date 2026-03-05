@@ -5,8 +5,8 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
-	"github.com/nexlified/dam/internal/application/ports/outbound"
-	"github.com/nexlified/dam/internal/domain"
+	"github.com/nexlified/dam/ports/outbound"
+	"github.com/nexlified/dam/domain"
 )
 
 // NewAuditLogger logs write operations to the audit log table.

@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/nexlified/dam/internal/domain"
+	"github.com/nexlified/dam/domain"
 )
 
 // AuthService handles authentication and authorization.

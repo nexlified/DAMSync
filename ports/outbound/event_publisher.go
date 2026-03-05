@@ -3,7 +3,7 @@ package outbound
 import (
 	"context"
 
-	"github.com/nexlified/dam/internal/domain"
+	"github.com/nexlified/dam/domain"
 )
 
 // EventPublisherPort sends domain events to a queue or stream.

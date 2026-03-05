@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/nexlified/dam/internal/domain"
+	"github.com/nexlified/dam/domain"
 	"github.com/nexlified/dam/internal/testutil"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"

@@ -14,6 +14,7 @@ type Org struct {
 	StorageQuotaBytes int64       `db:"storage_quota_bytes" json:"storage_quota_bytes"`
 	StorageUsedBytes  int64       `db:"storage_used_bytes"  json:"storage_used_bytes"`
 	Settings          OrgSettings `db:"settings"            json:"settings"`
+	Active            bool        `db:"active"              json:"active"`
 	CreatedAt         time.Time   `db:"created_at"          json:"created_at"`
 	UpdatedAt         time.Time   `db:"updated_at"          json:"updated_at"`
 }

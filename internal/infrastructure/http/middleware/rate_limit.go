@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/nexlified/dam/internal/application/ports/outbound"
+	"github.com/nexlified/dam/ports/outbound"
 )
 
 // NewRateLimiter returns a middleware that rate-limits by IP + API key.
